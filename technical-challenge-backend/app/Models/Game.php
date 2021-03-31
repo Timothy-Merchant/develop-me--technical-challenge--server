@@ -13,4 +13,9 @@ class Game extends Model
     {
         return $this->hasMany(Player::class);
     }
+
+    public function round()
+    {     
+        return $this->belongsTo(Round::class);
+    }
 }
