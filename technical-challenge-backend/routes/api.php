@@ -14,27 +14,22 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// <!-- Post Players -->
-// POST api/players
-// <!-- This will then create rounds and games -->
-
-// Get Rounds
-// <!-- Get all rounds -->
-// GET api/rounds
-// <!-- Get a single round -->
-// GET api/rounds/1
-// <!-- Get all games for a single round -->
-// GET api/rounds/1/games
-// <!-- Get a single game -->
-// GET api/rounds/1/games/1
-// <!-- Get players for a specific game -->
-// GET api/rounds/1/games/1/players
-
-// One to Many relationships:
-
-// Rounds (Have Many Games) 
-// Games (Have Many Players)
-
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+// Create Players for the game (from the frontend Roster list)
+Route::post('/players', [PlayerController::class, 'create']);
+
+// Routes that are based on rounds
+Route::group(["prefix" => "rounds"], function () {
+    Route::get("/", [RoundController::class, "index"]);
+    Route::get("/{round}", [RoundController::class, "show"]);
+    Route::get("/{round}/games", [GameController::class, "index"]);
+    Route::get("/{round}/games/{game}", [GameController::class, "show"]);
+    Route::get("/{round}/games/{game}/players", [GameController::class, "index"]);
+    Route::get("/{round}/games/{game}/players/{player}", [GameController::class, "show"]);
+    // Route::group(["prefix" => "{round}"], function () {
+        
+    // });
 });
