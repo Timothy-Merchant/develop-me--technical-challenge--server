@@ -27,8 +27,8 @@ Route::group(["prefix" => "rounds"], function () {
     Route::get("/{round}", [RoundController::class, "show"]);
     Route::get("/{round}/games", [GameController::class, "index"]);
     Route::get("/{round}/games/{game}", [GameController::class, "show"]);
-    Route::get("/{round}/games/{game}/players", [GameController::class, "index"]);
-    Route::get("/{round}/games/{game}/players/{player}", [GameController::class, "show"]);
+    Route::get("/{round}/games/{game}/players", [PlayerController::class, "index"]);
+    Route::get("/{round}/games/{game}/players/{player}", [PlayerController::class, "show"]);
     // Route::group(["prefix" => "{round}"], function () {
         
     // });
