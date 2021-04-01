@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\RoundController;
 use App\Http\Controllers\PlayerController;
+use App\Http\Controllers\TournamentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,32 +26,44 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::post('/players', [PlayerController::class, 'createRoster']);
 
 // Routes that are based on rounds
-Route::group(["prefix" => "rounds"], function () {
-    Route::get("/", [RoundController::class, "index"]);
-    Route::post("/", [RoundController::class, "store"]);
 
-    Route::group(["prefix" => "{round}"], function () {
-        Route::get("", [RoundController::class, "show"]);
-        Route::put("", [RoundController::class, "update"]);
-        Route::delete("", [RoundController::class, "destroy"]);
+Route::group(["prefix" => "tournaments"], function () {
+    Route::get("", [TournamentController::class, "index"]);
+    Route::post("", [TournamentController::class, "store"]);
 
-        Route::group(["prefix" => "games"], function () {
-            Route::get("", [GameController::class, "index"]);
-            Route::post("", [GameController::class, "store"]);
+    Route::group(["prefix" => "{tournament}"], function () {
+        Route::get("", [TournamentController::class, "show"]);
+        Route::put("", [TournamentController::class, "update"]);
+        Route::delete("", [TournamentController::class, "destroy"]);
 
-            Route::group(["prefix" => "{game}"], function () {
-                Route::get("", [GameController::class, "show"]);
-                Route::put("", [GameController::class, "update"]);
-                Route::delete("", [GameController::class, "destroy"]);
+        Route::group(["prefix" => "rounds"], function () {
+            Route::get("", [RoundController::class, "index"]);
+            Route::post("", [RoundController::class, "store"]);
 
-                Route::group(["prefix" => "players"], function () {
-                    Route::get("", [PlayerController::class, "index"]);
-                    Route::post("", [PlayerController::class, "store"]);
+            Route::group(["prefix" => "{round}"], function () {
+                Route::get("", [RoundController::class, "show"]);
+                Route::put("", [RoundController::class, "update"]);
+                Route::delete("", [RoundController::class, "destroy"]);
 
-                    Route::group(["prefix" => "{player}"], function () {
-                        Route::get("", [PlayerController::class, "show"]);
-                        Route::put("", [PlayerController::class, "update"]);
-                        Route::delete("", [PlayerController::class, "destroy"]);
+                Route::group(["prefix" => "games"], function () {
+                    Route::get("", [GameController::class, "index"]);
+                    Route::post("", [GameController::class, "store"]);
+
+                    Route::group(["prefix" => "{game}"], function () {
+                        Route::get("", [GameController::class, "show"]);
+                        Route::put("", [GameController::class, "update"]);
+                        Route::delete("", [GameController::class, "destroy"]);
+
+                        Route::group(["prefix" => "players"], function () {
+                            Route::get("", [PlayerController::class, "index"]);
+                            Route::post("", [PlayerController::class, "store"]);
+
+                            Route::group(["prefix" => "{player}"], function () {
+                                Route::get("", [PlayerController::class, "show"]);
+                                Route::put("", [PlayerController::class, "update"]);
+                                Route::delete("", [PlayerController::class, "destroy"]);
+                            });
+                        });
                     });
                 });
             });

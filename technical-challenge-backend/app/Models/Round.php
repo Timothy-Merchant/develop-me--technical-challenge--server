@@ -15,7 +15,12 @@ class Round extends Model
     ];
 
     public function games()
-    {        
+    {
         return $this->hasMany(Game::class);
+    }
+
+    public function round()
+    {
+        return $this->belongsTo(Round::class);
     }
 }
