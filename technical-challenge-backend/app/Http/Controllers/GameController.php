@@ -3,49 +3,60 @@
 namespace App\Http\Controllers;
 
 use App\Models\Game;
+use App\Models\Round;
 use Illuminate\Http\Request;
+use App\Http\Resources\GameResource;
 
 class GameController extends Controller
 {
-    public function index()
+
+    public function index(Round $round)
     {
-        $games = Game::all();
-        return $games;
+        // return all comments for a specific round
+        // uses Eloquent's magic relationship properties
+        return GameResource::collection($round->games);
     }
 
-    public function show(Game $game)
+    // don't actually use $round, but required for route model binding
+    public function show(Round $round, Game $game)
     {
-        // just return the game
-        return $game;
+        // return the game
+        return new GameResource($game);
     }
 
-    public function store(Request $request)
+    // get the $round using Route Model Binding
+    public function store(Request $request, Round $round)
     {
-        // get all the request data
-        // returns an array of all the data the user sent
         $data = $request->all();
-        // create game with data and store in DB
-        // and return it as JSON
-        // automatically gets 201 status as it's a POST request
-        return Game::create($data);
+        // create a new game with the data
+        $game = new Game($data);
+        // associate the game with a round
+        $game->round()->associate($round);
+        // save the game in the DB
+        $game->save();
+        // return the new $game
+        return new GameResource($game);
     }
 
-    public function destroy(Game $game)
+    // don't actually use $round, but required for route model binding
+    public function destroy(Round $round, Game $game)
     {
-        // delete the article from the DB
+        // delete the game
         $game->delete();
-        // use a 204 code as there is no content in the response
+        // return an empty response
         return response(null, 204);
     }
 
-    public function update(Request $request, Game $game)
+    public function update(Request $request, Round $round, Game $game)
     {
-        // get the request data
         $data = $request->all();
-        // update the game using the fill method
-        // then save it to the database
-        $game->fill($data)->save();
-        // return the updated version
-        return $game;
+        // update the model with new data
+        $game->fill($data);
+        // don't need to associate with round as shouldn't have changed
+        // but $round required for route model binding
+        // save the game
+        $game->save();
+        // return the updated game
+        return new GameResource($game);
     }
 }
