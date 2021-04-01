@@ -9,6 +9,10 @@ class Round extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'complete'
+    ];
+
     public function games()
     {        
         return $this->hasMany(Game::class);
