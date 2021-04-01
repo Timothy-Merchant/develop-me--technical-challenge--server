@@ -10,7 +10,8 @@ class Round extends Model
     use HasFactory;
 
     protected $fillable = [
-        'complete'
+        'complete',
+        'tournament_id'
     ];
 
     public function games()

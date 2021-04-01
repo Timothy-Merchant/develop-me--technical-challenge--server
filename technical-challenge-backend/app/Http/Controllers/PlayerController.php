@@ -17,6 +17,23 @@ class PlayerController extends Controller
         return PlayerResource::collection($game->players);
     }
 
+    public function createRoster(Request $request)
+    {
+        $players = $request->all();
+        dd($players);
+
+        // let players = newPlayers.map((player, index) => ({ ...player, won: 0, score: 0 }))
+        foreach ($players as $player) {
+            Player::create([
+                'name' => $player->name,
+                'won' => 0,
+                'score' => 0
+            ]);
+        }
+
+        return $request;
+    }
+
     // don't actually use $game, but required for route model binding
     public function show(Round $round, Game $game, Player $player)
     {
