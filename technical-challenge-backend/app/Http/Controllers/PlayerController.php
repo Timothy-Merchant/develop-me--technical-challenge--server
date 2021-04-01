@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Game;
+use App\Models\Round;
 use App\Models\Player;
 use Illuminate\Http\Request;
 use App\Http\Resources\PlayerResource;
 
 class PlayerController extends Controller
 {
-    public function index(Game $game)
+    public function index(Round $round, Game $game)
     {
         // return all comments for a specific round
         // uses Eloquent's magic relationship properties
@@ -17,14 +18,14 @@ class PlayerController extends Controller
     }
 
     // don't actually use $game, but required for route model binding
-    public function show(Game $game, Player $player)
+    public function show(Round $round, Game $game, Player $player)
     {
         // return the player
         return new PlayerResource($player);
     }
 
     // get the $game using Route Model Binding
-    public function store(Request $request, Game $game)
+    public function store(Request $request, Round $round, Game $game)
     {
         $data = $request->all();
         // create a new player with the data
@@ -38,7 +39,7 @@ class PlayerController extends Controller
     }
 
     // don't actually use $game, but required for route model binding
-    public function destroy(Game $game, Player $player)
+    public function destroy(Round $round, Game $game, Player $player)
     {
         // delete the game
         $player->delete();
@@ -46,7 +47,7 @@ class PlayerController extends Controller
         return response(null, 204);
     }
 
-    public function update(Request $request, Game $game, Player $player)
+    public function update(Request $request, Round $round, Game $game, Player $player)
     {
         $data = $request->all();
         // update the model with new data

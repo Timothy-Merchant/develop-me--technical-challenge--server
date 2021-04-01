@@ -26,28 +26,34 @@ Route::post('/players', [PlayerController::class, 'store']);
 
 // Routes that are based on rounds
 Route::group(["prefix" => "rounds"], function () {
-
     Route::get("/", [RoundController::class, "index"]);
     Route::post("/", [RoundController::class, "store"]);
-    Route::put("/", [RoundController::class, "update"]);
-    Route::delete("/", [RoundController::class, "destroy"]);
-    Route::get("/{round}", [RoundController::class, "show"]);
 
     Route::group(["prefix" => "{round}"], function () {
+        Route::get("", [RoundController::class, "show"]);
+        Route::put("", [RoundController::class, "update"]);
+        Route::delete("", [RoundController::class, "destroy"]);
 
-        Route::get("/games", [GameController::class, "index"]);
-        Route::post("/games", [GameController::class, "store"]);
-        Route::get("/games/{game}", [GameController::class, "show"]);
-        Route::put("/games/{game}", [GameController::class, "update"]);
-        Route::delete("/games/{game}", [GameController::class, "destroy"]);
+        Route::group(["prefix" => "games"], function () {
+            Route::get("", [GameController::class, "index"]);
+            Route::post("", [GameController::class, "store"]);
 
-        Route::group(["prefix" => "{game}"], function () {
+            Route::group(["prefix" => "{game}"], function () {
+                Route::get("", [GameController::class, "show"]);
+                Route::put("", [GameController::class, "update"]);
+                Route::delete("", [GameController::class, "destroy"]);
 
-            Route::get("/players", [PlayerController::class, "index"]);
-            Route::post("/players", [PlayerController::class, "store"]);
-            Route::get("/players/{player}", [PlayerController::class, "show"]);
-            Route::put("/players/{player}", [PlayerController::class, "update"]);
-            Route::delete("/players/{player}", [PlayerController::class, "destroy"]);
+                Route::group(["prefix" => "players"], function () {
+                    Route::get("", [PlayerController::class, "index"]);
+                    Route::post("", [PlayerController::class, "store"]);
+
+                    Route::group(["prefix" => "{player}"], function () {
+                        Route::get("", [PlayerController::class, "show"]);
+                        Route::put("", [PlayerController::class, "update"]);
+                        Route::delete("", [PlayerController::class, "destroy"]);
+                    });
+                });
+            });
         });
     });
 });
