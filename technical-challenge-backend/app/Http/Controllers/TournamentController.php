@@ -21,13 +21,34 @@ class TournamentController extends Controller
 
     public function store(Request $request)
     {
-        // get all the request data
-        // returns an array of all the data the user sent
-        $data = $request->all();
-        // create tournament with data and store in DB
-        // and return it as JSON
-        // automatically gets 201 status as it's a POST request
-        return Tournament::create($data);
+        // The request will be an array of player objects
+
+        // To test, we're gonna try and make a tournament, with 1 round, with 1 game, with all the players in it
+
+        $newTournament = Tournament::create(['champion' => '']);
+
+        $newRounds = $newTournament->rounds()->createMany([
+            ['complete' => 0],
+            ['complete' => 0],
+        ]);
+
+        $newTournament->push();
+
+        $newGames = $newRounds[0]->games()->createMany([
+            ['deuce' => 0, 'complete' => 0, 'service' => 0],
+            ['deuce' => 0, 'complete' => 0, 'service' => 0],
+            ['deuce' => 0, 'complete' => 0, 'service' => 0]
+        ]);
+
+        $newRounds->push();
+
+        $newPlayers = $newGames[0]->players()->createMany([
+            ['name' => '', 'score' => 0, 'won' => 0],
+            ['name' => '', 'score' => 0, 'won' => 0],
+            ['name' => '', 'score' => 0, 'won' => 0]
+        ]);
+
+        return [$newTournament, $newRounds, $newGames, $newPlayers];
     }
 
     public function destroy(Tournament $tournament)
