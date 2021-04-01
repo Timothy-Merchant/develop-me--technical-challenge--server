@@ -9,6 +9,13 @@ class Game extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'round_id',
+        'deuce',
+        'complete',
+        'service'
+    ];
+
     public function players()
     {
         return $this->hasMany(Player::class);
