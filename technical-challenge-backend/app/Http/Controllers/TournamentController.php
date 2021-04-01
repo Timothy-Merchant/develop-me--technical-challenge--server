@@ -23,7 +23,25 @@ class TournamentController extends Controller
     {
         // The request will be an array of player objects
 
-        // To test, we're gonna try and make a tournament, with 1 round, with 1 game, with all the players in it
+        // Reset score and won for players moving to next round
+        // let players = newPlayers.map((player, index) => ({ ...player, won: 0, score: 0 }))
+
+        // // Slice the array of names into two halves, then create new player objects using the passed in names
+        // let half = Math.floor(players.length / 2)
+        // let player1s = players.slice(0, half);
+        // let player2s = players.slice(half, players.length);
+
+        // // Create an array of new 'game' objects that contain two player objects for each competitor
+        // let mergedGames = player1s.map((player1, index) => ({
+        //     id: index,
+        //     player1: player1,
+        //     player2: player2s[index],
+        //     deuce: 0,
+        //     service: 1,
+        //     complete: 0
+        // }))
+
+        // return mergedGames
 
         $newTournament = Tournament::create(['champion' => '']);
 
@@ -42,11 +60,7 @@ class TournamentController extends Controller
 
         $newRounds->push();
 
-        $newPlayers = $newGames[0]->players()->createMany([
-            ['name' => '', 'score' => 0, 'won' => 0],
-            ['name' => '', 'score' => 0, 'won' => 0],
-            ['name' => '', 'score' => 0, 'won' => 0]
-        ]);
+        $newPlayers = $newGames[0]->players()->createMany($request->all());
 
         return [$newTournament, $newRounds, $newGames, $newPlayers];
     }
