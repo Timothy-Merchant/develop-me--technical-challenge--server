@@ -19,8 +19,8 @@ class Round extends Model
         return $this->hasMany(Game::class);
     }
 
-    public function round()
+    public function tournament()
     {
-        return $this->belongsTo(Round::class);
+        return $this->belongsTo(Tournament::class);
     }
 }

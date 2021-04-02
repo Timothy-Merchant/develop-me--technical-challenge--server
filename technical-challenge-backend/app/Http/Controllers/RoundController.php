@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Game;
 use App\Models\Round;
+use App\Models\Player;
+use App\Models\Tournament;
 use Illuminate\Http\Request;
 
 class RoundController extends Controller
@@ -19,15 +22,39 @@ class RoundController extends Controller
         return $round;
     }
 
-    public function store(Request $request)
+    public function store(Request $request, Tournament $tournament)
     {
-        // get all the request data
-        // returns an array of all the data the user sent
         $data = $request->all();
-        // create round with data and store in DB
-        // and return it as JSON
-        // automatically gets 201 status as it's a POST request
-        return Round::create($data);
+
+        $rounds = $data["rounds"];
+        $games = $data["games"];
+        $players = $data["players"];
+
+        foreach ($rounds as $round) {
+            $newRound = Round::create($round)->tournament()->associate($tournament);
+
+            foreach ($round["games"] as $game) {
+                Game::create([
+                    "round_id" => $newRound["id"],
+                    "deuce" => 0,
+                    "service" => 0,
+                    "complete" => 0
+                ])->round()->associate($newRound);
+            }
+        }
+
+        // $data = $request->all();     
+        // $animal = new Animal($data);                 
+        // $animal->owner()->associate($owner);
+        // $animal->save();
+        // $animal->setTreatments($request->get("treatments"));
+        // return new AnimalResource($animal);
+
+        // foreach ($players as $player) {
+        //     Player::create($player);
+        // }
+
+        return $rounds;
     }
 
     public function destroy(Round $round)

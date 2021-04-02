@@ -6,11 +6,12 @@ use App\Models\Game;
 use App\Models\Round;
 use Illuminate\Http\Request;
 use App\Http\Resources\GameResource;
+use App\Models\Tournament;
 
 class GameController extends Controller
 {
 
-    public function index(Round $round)
+    public function index(Tournament $tournament, Round $round)
     {
         // return all comments for a specific round
         // uses Eloquent's magic relationship properties
@@ -25,7 +26,7 @@ class GameController extends Controller
     }
 
     // get the $round using Route Model Binding
-    public function store(Request $request, Round $round)
+    public function store(Request $request, Round $round, Tournament $tournament)
     {
         $data = $request->all();
         // create a new game with the data
@@ -35,7 +36,8 @@ class GameController extends Controller
         // save the game in the DB
         $game->save();
         // return the new $game
-        return new GameResource($game);
+        // return new GameResource($game);
+        return $data;
     }
 
     // don't actually use $round, but required for route model binding
