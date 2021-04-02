@@ -34,12 +34,39 @@ class RoundController extends Controller
             $newRound = Round::create($round)->tournament()->associate($tournament);
 
             foreach ($round["games"] as $game) {
-                Game::create([
+
+                $newGame = Game::create([
                     "round_id" => $newRound["id"],
                     "deuce" => 0,
                     "service" => 0,
                     "complete" => 0
                 ])->round()->associate($newRound);
+
+                if (isset($game["player1"]["name"])) {
+                    $player1 = $game["player1"]["name"];
+                }
+
+                if (isset($game["player2"]["name"])) {
+                    $player2 = $game["player2"]["name"];
+                }
+
+                if ($player1 !== "") {
+                    $newPlayer = Player::create([
+                        "game_id" => $newGame["id"],
+                        "name" => $player1,
+                        "score" => 0,
+                        "won" => 0,
+                    ])->game()->associate($newGame);
+                }
+
+                if ($player2 !== "") {
+                    $newPlayer = Player::create([
+                        "game_id" => $newGame["id"],
+                        "name" => $player2,
+                        "score" => 0,
+                        "won" => 0,
+                    ])->game()->associate($newGame);
+                }
             }
         }
 

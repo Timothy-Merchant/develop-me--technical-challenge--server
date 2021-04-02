@@ -10,6 +10,7 @@ class Player extends Model
     use HasFactory;
 
     protected $fillable = [
+        'game_id',
         'name',
         'score',
         'won'

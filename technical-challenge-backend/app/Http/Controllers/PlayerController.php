@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Game;
 use App\Models\Round;
 use App\Models\Player;
+use App\Models\Tournament;
 use Illuminate\Http\Request;
 use App\Http\Resources\PlayerResource;
 
 class PlayerController extends Controller
 {
-    public function index(Round $round, Game $game)
+    public function index(Tournament $tournament, Round $round, Game $game)
     {
         // return all comments for a specific round
         // uses Eloquent's magic relationship properties
