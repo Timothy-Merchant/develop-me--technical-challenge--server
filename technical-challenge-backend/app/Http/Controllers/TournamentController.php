@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Game;
+use App\Models\Round;
+use App\Models\Player;
 use App\Models\Tournament;
 use Illuminate\Http\Request;
 
@@ -19,28 +22,46 @@ class TournamentController extends Controller
         return $tournament;
     }
 
-    public function store(Request $request)
+    public function startTournament(Request $request)
     {
-
         $data = $request->all();
 
+        $rounds = $data["rounds"];        
+
         $newTournament = Tournament::create(['champion' => '']);
+        $tournamentID = $newTournament["id"];
 
-        // $newGames = $newRounds[0]->games()->createMany($data["games"]);
+        foreach ($rounds as $round) {
+            $newRound = Round::create([
+                'complete' => 0,
+                'tournament_id' => $tournamentID
+            ])->tournament()->associate($newTournament);
 
-        // $newRounds->push();
+            foreach ($round["games"] as $game) {
+                $newGame = Game::create([
+                    "round_id" => $newRound["id"],
+                    "deuce" => 0,
+                    "service" => 0,
+                    "complete" => 0
+                ])->round()->associate($newRound);
 
-        // $newPlayers = $newGames[0]->players()->createMany($data["players"]);
+                Player::create([
+                    "game_id" => $newGame["id"],
+                    "name" => isset($game["player1"]["name"]) ? $game["player1"]["name"] : "",
+                    "score" => 0,
+                    "won" => 0,
+                ])->game()->associate($newGame);
 
+                Player::create([
+                    "game_id" => $newGame["id"],
+                    "name" => isset($game["player2"]["name"]) ? $game["player2"]["name"] : "",
+                    "score" => 0,
+                    "won" => 0,
+                ])->game()->associate($newGame);
+            }
+        }
 
-        // $animal = new Animal($data);                 
-        // $animal->owner()->associate($owner);
-        // $animal->save();
-        // $animal->setTreatments($request->get("treatments"));
-        // return new AnimalResource($animal);
-
-        // return [$newTournament, $newRounds, $newGames, $newPlayers];
-        return $newTournament;
+        return "Tournament Started";
     }
 
     public function destroy(Tournament $tournament)

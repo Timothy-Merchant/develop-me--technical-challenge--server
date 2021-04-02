@@ -29,7 +29,7 @@ Route::post('/players', [PlayerController::class, 'createRoster']);
 
 Route::group(["prefix" => "tournaments"], function () {
     Route::get("", [TournamentController::class, "index"]);
-    Route::post("", [TournamentController::class, "store"]);
+    Route::post("", [TournamentController::class, "startTournament"]);
 
     Route::group(["prefix" => "{tournament}"], function () {
         Route::get("", [TournamentController::class, "show"]);
