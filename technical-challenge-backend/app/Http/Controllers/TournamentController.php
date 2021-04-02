@@ -26,16 +26,22 @@ class TournamentController extends Controller
     {
         $data = $request->all();
 
-        $rounds = $data["rounds"];        
+        $rounds = $data["rounds"];
 
         $newTournament = Tournament::create(['champion' => '']);
         $tournamentID = $newTournament["id"];
+
+        $newRounds = [];
+        $newGames = [];
+        $newPlayers = [];
 
         foreach ($rounds as $round) {
             $newRound = Round::create([
                 'complete' => 0,
                 'tournament_id' => $tournamentID
             ])->tournament()->associate($newTournament);
+
+            array_push($newRounds, $newRound);
 
             foreach ($round["games"] as $game) {
                 $newGame = Game::create([
@@ -45,23 +51,29 @@ class TournamentController extends Controller
                     "complete" => 0
                 ])->round()->associate($newRound);
 
-                Player::create([
+                array_push($newGames, $newGame);
+
+                $newPlayer1 = Player::create([
                     "game_id" => $newGame["id"],
                     "name" => isset($game["player1"]["name"]) ? $game["player1"]["name"] : "",
                     "score" => 0,
                     "won" => 0,
                 ])->game()->associate($newGame);
 
-                Player::create([
+                array_push($newPlayers, $newPlayer1);
+
+                $newPlayer2 = Player::create([
                     "game_id" => $newGame["id"],
                     "name" => isset($game["player2"]["name"]) ? $game["player2"]["name"] : "",
                     "score" => 0,
                     "won" => 0,
                 ])->game()->associate($newGame);
+
+                array_push($newPlayers, $newPlayer2);
             }
         }
 
-        return "Tournament Started";
+        return [$newTournament, $newRounds, $newGames, $newPlayers];
     }
 
     public function destroy(Tournament $tournament)

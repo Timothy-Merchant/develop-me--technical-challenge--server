@@ -10,10 +10,9 @@ use Illuminate\Http\Request;
 
 class RoundController extends Controller
 {
-    public function index()
+    public function index(Tournament $tournament, Round $round)
     {
-        $rounds = Round::all();
-        return $rounds;
+        return $tournament->rounds;
     }
 
     public function show(Round $round)
