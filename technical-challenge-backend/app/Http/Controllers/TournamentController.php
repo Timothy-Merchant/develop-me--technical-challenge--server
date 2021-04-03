@@ -7,6 +7,9 @@ use App\Models\Round;
 use App\Models\Player;
 use App\Models\Tournament;
 use Illuminate\Http\Request;
+use App\Http\Resources\GameResource;
+use App\Http\Resources\RoundResource;
+use App\Http\Resources\PlayerResource;
 
 class TournamentController extends Controller
 {
@@ -41,7 +44,7 @@ class TournamentController extends Controller
                 'tournament_id' => $tournamentID
             ])->tournament()->associate($newTournament);
 
-            array_push($newRounds, $newRound);
+            array_push($newRounds, new RoundResource($newRound));
 
             foreach ($round["games"] as $game) {
                 $newGame = Game::create([
@@ -51,7 +54,7 @@ class TournamentController extends Controller
                     "complete" => 0
                 ])->round()->associate($newRound);
 
-                array_push($newGames, $newGame);
+                array_push($newGames, new GameResource($newGame));
 
                 $newPlayer1 = Player::create([
                     "game_id" => $newGame["id"],
@@ -60,7 +63,7 @@ class TournamentController extends Controller
                     "won" => 0,
                 ])->game()->associate($newGame);
 
-                array_push($newPlayers, $newPlayer1);
+                array_push($newPlayers, new PlayerResource($newPlayer1));
 
                 $newPlayer2 = Player::create([
                     "game_id" => $newGame["id"],
@@ -69,7 +72,7 @@ class TournamentController extends Controller
                     "won" => 0,
                 ])->game()->associate($newGame);
 
-                array_push($newPlayers, $newPlayer2);
+                array_push($newPlayers, new PlayerResource($newPlayer2));
             }
         }
 
