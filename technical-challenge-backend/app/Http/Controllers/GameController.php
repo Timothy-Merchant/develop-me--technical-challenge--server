@@ -55,13 +55,13 @@ class GameController extends Controller
     {
         $data = $request->all();
 
-        $players = $data["players"];
+        $players = $data["players"];        
 
-        $affected = DB::table('players')
+        DB::table('players')
             ->where('id', $players[0]["id"])
             ->update(['won' => $players[0]["won"]]);
 
-        $affected2 = DB::table('players')
+        DB::table('players')
             ->where('id', $players[1]["id"])
             ->update(['won' => $players[1]["won"]]);
 
@@ -69,6 +69,8 @@ class GameController extends Controller
 
         $game->update(["complete" => 1]);
 
-        return new GameResource($game);
+        $newGame = new GameResource($game);
+
+        return [$newGame, $players];
     }
 }

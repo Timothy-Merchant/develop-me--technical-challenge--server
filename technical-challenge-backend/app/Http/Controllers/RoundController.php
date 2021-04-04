@@ -91,13 +91,16 @@ class RoundController extends Controller
         return response(null, 204);
     }
 
-    public function update(Request $request, Round $round)
+    public function update(Request $request, Tournament $tournament, Round $round)
     {
         // get the request data
         $data = $request->all();
         // update the round using the fill method
         // then save it to the database
+
         $round->fill($data)->save();
+
+        $round->update(["complete" => 1]);
         // return the updated version
         return $round;
     }
