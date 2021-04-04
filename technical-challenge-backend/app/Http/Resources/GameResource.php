@@ -20,6 +20,7 @@ class GameResource extends JsonResource
             "deuce" => $this->deuce,
             "complete" => $this->complete,
             "service" => $this->service,
+            "players" => $this->players
         ];
     }
 }

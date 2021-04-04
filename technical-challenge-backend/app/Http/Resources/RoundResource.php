@@ -18,7 +18,9 @@ class RoundResource extends JsonResource
             "id" => $this->id,
             "complete" => $this->complete,
             "tournament_id" => $this->tournament_id,
-            "games" => $this->games
+            "games" => $this->games->map(function ($game, $key) {
+                return new GameResource(($game));
+            })
         ];
     }
 }

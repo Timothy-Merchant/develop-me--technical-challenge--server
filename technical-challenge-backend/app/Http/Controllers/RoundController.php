@@ -7,6 +7,9 @@ use App\Models\Round;
 use App\Models\Player;
 use App\Models\Tournament;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Resources\GameResource;
+use App\Http\Resources\RoundResource;
 
 class RoundController extends Controller
 {
@@ -93,15 +96,29 @@ class RoundController extends Controller
 
     public function update(Request $request, Tournament $tournament, Round $round)
     {
-        // get the request data
         $data = $request->all();
-        // update the round using the fill method
-        // then save it to the database
+
+        $game = $data["updatedGame"];
+
+        // Update the last game and players
+        DB::table('games')
+            ->where('id', $game["id"])
+            ->update(['complete' => 1]);
+
+        DB::table('players')
+            ->where('id', $game["players"][0]["id"])
+            ->update(['won' => $game["players"][0]["won"]]);
+
+        DB::table('players')
+            ->where('id', $game["players"][1]["id"])
+            ->update(['won' => $game["players"][1]["won"]]);
+
+        $updatedGame = new GameResource(Game::find($game["id"]));
 
         $round->fill($data)->save();
 
         $round->update(["complete" => 1]);
-        // return the updated version
-        return $round;
+
+        return [new RoundResource($round), new GameResource($updatedGame)];
     }
 }
