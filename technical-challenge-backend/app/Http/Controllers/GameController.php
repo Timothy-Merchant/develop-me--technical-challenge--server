@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Game;
 use App\Models\Round;
-use Illuminate\Http\Request;
-use App\Http\Resources\GameResource;
+use App\Models\Player;
 use App\Models\Tournament;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Resources\GameResource;
 
 class GameController extends Controller
 {
@@ -49,16 +51,24 @@ class GameController extends Controller
         return response(null, 204);
     }
 
-    public function update(Request $request, Round $round, Game $game)
+    public function update(Request $request, Tournament $tournament, Round $round, Game $game)
     {
         $data = $request->all();
-        // update the model with new data
+
+        $players = $data["players"];
+
+        $affected = DB::table('players')
+            ->where('id', $players[0]["id"])
+            ->update(['won' => $players[0]["won"]]);
+
+        $affected2 = DB::table('players')
+            ->where('id', $players[1]["id"])
+            ->update(['won' => $players[1]["won"]]);
+
         $game->fill($data);
-        // don't need to associate with round as shouldn't have changed
-        // but $round required for route model binding
-        // save the game
-        $game->save();
-        // return the updated game
+
+        $game->update(["complete" => 1]);
+
         return new GameResource($game);
     }
 }

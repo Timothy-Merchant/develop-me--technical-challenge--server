@@ -8,6 +8,7 @@ use App\Models\Player;
 use App\Models\Tournament;
 use Illuminate\Http\Request;
 use App\Http\Resources\PlayerResource;
+use PDO;
 
 class PlayerController extends Controller
 {
@@ -50,18 +51,16 @@ class PlayerController extends Controller
 
     public function update(Request $request, Tournament $tournament, Round $round, Game $game, Player $player)
     {
-        $data = $request->all();
+        $currentPlayer = $request->all();        
 
-        $gameID = $request->game_id;
-        $currentGame = Game::find($gameID);
-        
-        dd($currentGame);
         // update the model with new data
-        $player->fill($data);
+        $player->fill($currentPlayer);
+
         // don't need to associate with game as shouldn't have changed
         // but $game required for route model binding
         // save the player
         $player->save();
+
         // return the updated player
         return new PlayerResource($player);
     }
