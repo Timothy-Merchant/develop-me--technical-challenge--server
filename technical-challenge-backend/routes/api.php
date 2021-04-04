@@ -23,7 +23,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 // Create Players for the game (from the frontend Roster list)
-Route::post('/players', [PlayerController::class, 'createRoster']);
+Route::put('/players/{player}', [PlayerController::class, 'update']);
 
 // Routes that are based on rounds
 

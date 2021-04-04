@@ -48,9 +48,14 @@ class PlayerController extends Controller
         return response(null, 204);
     }
 
-    public function update(Request $request, Round $round, Game $game, Player $player)
+    public function update(Request $request, Tournament $tournament, Round $round, Game $game, Player $player)
     {
         $data = $request->all();
+
+        $gameID = $request->game_id;
+        $currentGame = Game::find($gameID);
+        
+        dd($currentGame);
         // update the model with new data
         $player->fill($data);
         // don't need to associate with game as shouldn't have changed
