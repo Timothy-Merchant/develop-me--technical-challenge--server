@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\GameResource;
 use PDO;
 use App\Models\Game;
 use App\Models\Round;
@@ -55,33 +56,39 @@ class PlayerController extends Controller
 
         $data = $request->all();
 
+        $player1or2 = $data["player1or2"];
         $deuce = $data["game"]["deuce"];
         $service = $data["game"]["service"];
         $players = $data["game"]["players"];
+        $player1 = $data["game"]["players"][0];
+        $player2 = $data["game"]["players"][1];
         $playerToScore = $data["player"];
-
-        // DB::table('players')
-        //     ->where('id', $playerToScore["id"])
-        //     ->update(['score' => $playerToScore["score"] + 1]);
-
-        // DB::table('games')
-        //     ->where('id', $players[0]["id"])
-        //     ->update(['won' => $players[0]["won"]]);
-
-        // DB::table('players')
-        //     ->where('id', $players[1]["id"])
-        //     ->update(['won' => $players[1]["won"]]);
-
 
         // update the model with new data
         $player->fill(["score" => $playerToScore["score"] + 1]);
+
+        // Update player1 or player2's score for game logic purposes
+        $player1or2 === 1 ? $player1["score"] += 1 : $player2["score"] += 1;
+
+        // If both players have 20 or more points we're in a state of deuce
+        if ($player1["score"] >= 20 && $player2["score"] >= 20) {
+            $game->fill(["deuce" => 1]);
+        };
+
+        // If 2 points have passed and we're in deuce then change service
+
+
+
+        // Else, if 5 points have passed and we're not in deuce then change service
+
 
         // don't need to associate with game as shouldn't have changed
         // but $game required for route model binding
         // save the player
         $player->save();
+        $game->save();
 
         // return the updated player
-        return new PlayerResource($player);
+        return [new PlayerResource($player), new GameResource($game)];
     }
 }
