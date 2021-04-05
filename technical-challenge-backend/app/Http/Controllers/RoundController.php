@@ -96,22 +96,30 @@ class RoundController extends Controller
 
     public function update(Request $request, Tournament $tournament, Round $round)
     {
+
         $data = $request->all();
+        // dd($request);        
 
-        $game = $data["updatedGame"];
+        foreach ($data["currentRound"]["games"] as $game) {            
+            // Update the last game and players
+            DB::table('games')
+                ->where('id', $game["id"])
+                ->update(['complete' => 1]);
 
-        // Update the last game and players
-        DB::table('games')
-            ->where('id', $game["id"])
-            ->update(['complete' => 1]);
+            DB::table('players')
+                ->where('id', $game["players"][0]["id"])
+                ->update([
+                    'won' => $game["players"][0]["won"],
+                    'name' => $game["players"][0]["name"]
+                ]);
 
-        DB::table('players')
-            ->where('id', $game["players"][0]["id"])
-            ->update(['won' => $game["players"][0]["won"]]);
-
-        DB::table('players')
-            ->where('id', $game["players"][1]["id"])
-            ->update(['won' => $game["players"][1]["won"]]);
+            DB::table('players')
+                ->where('id', $game["players"][1]["id"])
+                ->update([
+                    'won' => $game["players"][1]["won"],
+                    'name' => $game["players"][1]["name"]
+                ]);
+        }
 
         $updatedGame = new GameResource(Game::find($game["id"]));
 
