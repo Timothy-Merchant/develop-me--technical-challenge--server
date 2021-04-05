@@ -55,6 +55,7 @@ class PlayerController extends Controller
     {
         $data = $request->all();
 
+
         $player1or2 = $data["player1or2"];
         $deuce = $data["game"]["deuce"];
         $service = $data["game"]["service"];
@@ -63,12 +64,14 @@ class PlayerController extends Controller
         $player2 = $data["game"]["players"][1];
         $totalScore = $player1["score"] + $player2["score"];
         $playerToScore = $data["player"];
+        $adversary = Player::find($player1or2 === 1 ? $player2["id"] : $player1["id"]);
 
         // update the model with new data
-        $player->fill(["score" => $playerToScore["score"] + 1]);
-
-        // Update player1 or player2's score for game logic purposes
-        $player1or2 === 1 ? $player1["score"] += 1 : $player2["score"] += 1;
+        $player->fill([
+            "name" => $playerToScore["name"],
+            "score" => $playerToScore["score"] + 1,
+            "won" => $playerToScore["won"]
+        ]);
 
         // If both players have 20 or more points we're in a state of deuce
         if ($player1["score"] >= 3 && $player2["score"] >= 3) {
@@ -77,23 +80,40 @@ class PlayerController extends Controller
 
         // If a point has passed and we're in deuce then change service        
         if ($game["deuce"] === 1) {
+
             $game["service"] === 0 ?
                 $game->fill(["service" => 1]) : $game->fill(["service" => 0]);
+
+            if (abs($player["score"] - $adversary["score"]) > 2) {
+                $player->fill(["won" => 1]);
+                $adversary->fill(["won" => 2]);
+            }
         }
 
         // Else, change service every 2 serves
         if ($game["deuce"] === 0) {
+
             if ($totalScore % 2 === 0) {
                 $game["service"] === 0 ?
                     $game->fill(["service" => 1]) : $game->fill(["service" => 0]);
             }
+
+            if ($player["score"] > 5 && $player["score"] > $adversary["score"]) {
+
+                $player->fill(["won" => 1]);
+                $adversary->fill(["won" => 2]);
+            }
         }
+
+
 
         // don't need to associate with game as shouldn't have changed
         // but $game required for route model binding
         // save the player
+        $adversary->save();
         $player->save();
         $game->save();
+
 
         // return the updated player
         return [new PlayerResource($player), new GameResource($game)];

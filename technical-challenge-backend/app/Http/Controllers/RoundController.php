@@ -124,7 +124,7 @@ class RoundController extends Controller
 
         $round->fill($data)->save();
 
-        $round->update(["complete" => 1]);
+        $round->update(["complete" => 1]);        
 
         return new RoundResource($round);
     }
