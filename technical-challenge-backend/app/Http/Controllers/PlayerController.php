@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use PDO;
 use App\Models\Game;
 use App\Models\Round;
 use App\Models\Player;
 use App\Models\Tournament;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Resources\PlayerResource;
-use PDO;
 
 class PlayerController extends Controller
 {
@@ -51,10 +52,29 @@ class PlayerController extends Controller
 
     public function update(Request $request, Tournament $tournament, Round $round, Game $game, Player $player)
     {
-        $currentPlayer = $request->all();        
+
+        $data = $request->all();
+
+        $deuce = $data["game"]["deuce"];
+        $service = $data["game"]["service"];
+        $players = $data["game"]["players"];
+        $playerToScore = $data["player"];
+
+        // DB::table('players')
+        //     ->where('id', $playerToScore["id"])
+        //     ->update(['score' => $playerToScore["score"] + 1]);
+
+        // DB::table('games')
+        //     ->where('id', $players[0]["id"])
+        //     ->update(['won' => $players[0]["won"]]);
+
+        // DB::table('players')
+        //     ->where('id', $players[1]["id"])
+        //     ->update(['won' => $players[1]["won"]]);
+
 
         // update the model with new data
-        $player->fill($currentPlayer);
+        $player->fill(["score" => $playerToScore["score"] + 1]);
 
         // don't need to associate with game as shouldn't have changed
         // but $game required for route model binding

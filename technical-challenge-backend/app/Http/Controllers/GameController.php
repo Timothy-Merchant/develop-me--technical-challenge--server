@@ -53,7 +53,7 @@ class GameController extends Controller
 
     public function update(Request $request, Tournament $tournament, Round $round, Game $game)
     {
-        $data = $request->all();
+        $data = $request->all();        
 
         $players = $data["players"];        
 
