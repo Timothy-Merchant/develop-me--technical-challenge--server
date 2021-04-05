@@ -98,8 +98,9 @@ class TournamentController extends Controller
 
         // update the tournament using the fill method
         // then save it to the database
-        $tournament->fill(["champion" => $data["champion"]])->save();
+        $tournament->fill(["champion" => $data["champion"]])->save();        
+
         // return the updated version
-        return $tournament;
+        return [$tournament, $data];
     }
 }
