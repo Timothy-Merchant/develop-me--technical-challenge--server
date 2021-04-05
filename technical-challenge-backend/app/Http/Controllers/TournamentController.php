@@ -87,13 +87,18 @@ class TournamentController extends Controller
         return response(null, 204);
     }
 
-    public function update(Request $request, Tournament $tournament)
+    public function endTournament(Request $request, Tournament $tournament)
     {
         // get the request data
         $data = $request->all();
+
+        $players = $data["games"][0]["players"];
+
+        $data["champion"] = $players[0]["won"] === 1 ? $players[0]["name"] : $players[1]["name"];
+
         // update the tournament using the fill method
         // then save it to the database
-        $tournament->fill($data)->save();
+        $tournament->fill(["champion" => $data["champion"]])->save();
         // return the updated version
         return $tournament;
     }

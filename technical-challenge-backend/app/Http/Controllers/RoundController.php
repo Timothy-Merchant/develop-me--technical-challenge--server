@@ -97,7 +97,7 @@ class RoundController extends Controller
     public function update(Request $request, Tournament $tournament, Round $round)
     {
 
-        $data = $request->all();              
+        $data = $request->all();
 
         foreach ($data["currentRound"]["games"] as $game) {
             // Update the last game and players            

@@ -33,7 +33,7 @@ Route::group(["prefix" => "tournaments"], function () {
 
     Route::group(["prefix" => "{tournament}"], function () {
         Route::get("", [TournamentController::class, "show"]);
-        Route::put("", [TournamentController::class, "update"]);
+        Route::put("", [TournamentController::class, "endTournament"]);
         Route::delete("", [TournamentController::class, "destroy"]);
 
         Route::group(["prefix" => "rounds"], function () {
