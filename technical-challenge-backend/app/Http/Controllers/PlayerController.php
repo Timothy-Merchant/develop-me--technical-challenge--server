@@ -53,7 +53,6 @@ class PlayerController extends Controller
 
     public function update(Request $request, Tournament $tournament, Round $round, Game $game, Player $player)
     {
-
         $data = $request->all();
 
         $player1or2 = $data["player1or2"];
@@ -62,6 +61,7 @@ class PlayerController extends Controller
         $players = $data["game"]["players"];
         $player1 = $data["game"]["players"][0];
         $player2 = $data["game"]["players"][1];
+        $totalScore = $player1["score"] + $player2["score"];
         $playerToScore = $data["player"];
 
         // update the model with new data
@@ -71,16 +71,23 @@ class PlayerController extends Controller
         $player1or2 === 1 ? $player1["score"] += 1 : $player2["score"] += 1;
 
         // If both players have 20 or more points we're in a state of deuce
-        if ($player1["score"] >= 20 && $player2["score"] >= 20) {
+        if ($player1["score"] >= 3 && $player2["score"] >= 3) {
             $game->fill(["deuce" => 1]);
         };
 
-        // If 2 points have passed and we're in deuce then change service
+        // If a point has passed and we're in deuce then change service        
+        if ($game["deuce"] === 1) {
+            $game["service"] === 0 ?
+                $game->fill(["service" => 1]) : $game->fill(["service" => 0]);
+        }
 
-
-
-        // Else, if 5 points have passed and we're not in deuce then change service
-
+        // Else, change service every 2 serves
+        if ($game["deuce"] === 0) {
+            if ($totalScore % 2 === 0) {
+                $game["service"] === 0 ?
+                    $game->fill(["service" => 1]) : $game->fill(["service" => 0]);
+            }
+        }
 
         // don't need to associate with game as shouldn't have changed
         // but $game required for route model binding
