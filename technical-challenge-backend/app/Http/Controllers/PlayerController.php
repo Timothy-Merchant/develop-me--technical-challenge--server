@@ -58,11 +58,9 @@ class PlayerController extends Controller
         $player1or2 = $data["player1or2"];
         $deuce = $data["game"]["deuce"];
         $service = $data["game"]["service"];
-        $players = $data["game"]["players"];
         $player1 = $data["game"]["players"][0];
         $player2 = $data["game"]["players"][1];
         $totalScore = $player1["score"] + $player2["score"];
-        $playerToScore = $data["player"];
         $adversary = Player::find($player1or2 === 1 ? $player2['id'] : $player1['id']);
         $player = Player::find($player1or2 === 2 ? $player2['id'] : $player1['id']);
 
@@ -106,14 +104,17 @@ class PlayerController extends Controller
             }
         }
 
-        // don't need to associate with game as shouldn't have changed
-        // but $game required for route model binding
-        // save the player
+        // Update the players for the game to be returned to the frontend.
+        $player1or2 === 1 ?
+            $game->fill(["players" => [$player, $adversary]]) :
+            $game->fill(["players" => [$adversary, $player]]);
+
+        // Save the updated game and players to the database
         $adversary->save();
         $player->save();
         $game->save();
 
-        // return the updated player
+        // return the updated game and players to the frontend.
         return [$player, $adversary, $game];
     }
 }
