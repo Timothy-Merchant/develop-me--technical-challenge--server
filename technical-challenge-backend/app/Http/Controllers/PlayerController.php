@@ -55,7 +55,6 @@ class PlayerController extends Controller
     {
         $data = $request->all();
 
-
         $player1or2 = $data["player1or2"];
         $deuce = $data["game"]["deuce"];
         $service = $data["game"]["service"];
@@ -64,17 +63,19 @@ class PlayerController extends Controller
         $player2 = $data["game"]["players"][1];
         $totalScore = $player1["score"] + $player2["score"];
         $playerToScore = $data["player"];
-        $adversary = Player::find($player1or2 === 1 ? $player2["id"] : $player1["id"]);
+        $adversary = Player::find($player1or2 === 1 ? $player2['id'] : $player1['id']);
+        $player = Player::find($player1or2 === 2 ? $player2['id'] : $player1['id']);
 
-        // update the model with new data
-        $player->fill([
-            "name" => $playerToScore["name"],
-            "score" => $playerToScore["score"] + 1,
-            "won" => $playerToScore["won"]
-        ]);
+        if ($player1or2 === 1) {
+            $player->fill(["name" => $player1["name"], "score" => $player1["score"] + 1]);
+            $adversary->fill(["name" => $player2["name"]]);
+        } else {
+            $player->fill(["name" => $player2["name"], "score" => $player2["score"] + 1]);
+            $adversary->fill(["name" => $player1["name"]]);
+        }
 
         // If both players have 20 or more points we're in a state of deuce
-        if ($player1["score"] >= 3 && $player2["score"] >= 3) {
+        if ($player["score"] >= 3 && $adversary["score"] >= 3) {
             $game->fill(["deuce" => 1]);
         };
 
@@ -105,8 +106,6 @@ class PlayerController extends Controller
             }
         }
 
-
-
         // don't need to associate with game as shouldn't have changed
         // but $game required for route model binding
         // save the player
@@ -114,8 +113,7 @@ class PlayerController extends Controller
         $player->save();
         $game->save();
 
-
         // return the updated player
-        return [new PlayerResource($player), new GameResource($game)];
+        return [$player, $adversary, $game];
     }
 }
