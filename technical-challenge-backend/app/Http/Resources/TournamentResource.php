@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class TournamentResource extends JsonResource
@@ -20,7 +21,7 @@ class TournamentResource extends JsonResource
             "rounds" => $this->rounds->map(function ($round, $key) {
                 return new RoundResource(($round));
             }),
-            "updated_at" => $this->updated_at
+            "updated_at" => Carbon::createFromTimeString($this->updated_at)->format('F jS, Y')
         ];
     }
 }
