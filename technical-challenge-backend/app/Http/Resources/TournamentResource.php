@@ -19,7 +19,8 @@ class TournamentResource extends JsonResource
             "champion" => $this->champion,
             "rounds" => $this->rounds->map(function ($round, $key) {
                 return new RoundResource(($round));
-            })
+            }),
+            "updated_at" => $this->updated_at
         ];
     }
 }
