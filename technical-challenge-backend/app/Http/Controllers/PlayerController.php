@@ -62,18 +62,18 @@ class PlayerController extends Controller
         $player2 = $data["game"]["players"][1];
         $totalScore = $player1["score"] + $player2["score"];
         $adversary = Player::find($player1or2 === 1 ? $player2['id'] : $player1['id']);
-        $player = Player::find($player1or2 === 2 ? $player2['id'] : $player1['id']);
+        $newPlayer = Player::find($player1or2 === 2 ? $player2['id'] : $player1['id']);
 
         if ($player1or2 === 1) {
-            $player->fill(["name" => $player1["name"], "score" => $player1["score"] + 1]);
-            $adversary->fill(["name" => $player2["name"]]);
+            $newPlayer->fill(["name" => $player1["name"], "score" => $player1["score"] + 1, "won" => 0]);
+            $adversary->fill(["name" => $player2["name"], "won" => 0]);
         } else {
-            $player->fill(["name" => $player2["name"], "score" => $player2["score"] + 1]);
-            $adversary->fill(["name" => $player1["name"]]);
+            $newPlayer->fill(["name" => $player2["name"], "score" => $player2["score"] + 1, "won" => 0]);
+            $adversary->fill(["name" => $player1["name"], "won" => 0]);
         }
 
         // If both players have 20 or more points we're in a state of deuce
-        if ($player["score"] >= 3 && $adversary["score"] >= 3) {
+        if ($newPlayer["score"] >= 5 && $adversary["score"] >= 5) {
             $game->fill(["deuce" => 1]);
         };
 
@@ -83,8 +83,8 @@ class PlayerController extends Controller
             $game["service"] === 0 ?
                 $game->fill(["service" => 1]) : $game->fill(["service" => 0]);
 
-            if (abs($player["score"] - $adversary["score"]) > 2) {
-                $player->fill(["won" => 1]);
+            if (abs($newPlayer["score"] - $adversary["score"]) > 2) {
+                $newPlayer->fill(["won" => 1]);
                 $adversary->fill(["won" => 2]);
             }
         }
@@ -97,24 +97,24 @@ class PlayerController extends Controller
                     $game->fill(["service" => 1]) : $game->fill(["service" => 0]);
             }
 
-            if ($player["score"] > 5 && $player["score"] > $adversary["score"]) {
+            if (($newPlayer["score"] > 5) && ($newPlayer["score"] > $adversary["score"])) {
 
-                $player->fill(["won" => 1]);
+                $newPlayer->fill(["won" => 1]);
                 $adversary->fill(["won" => 2]);
             }
         }
 
         // Update the players for the game to be returned to the frontend.
         $player1or2 === 1 ?
-            $game->fill(["players" => [$player, $adversary]]) :
-            $game->fill(["players" => [$adversary, $player]]);
+            $game->fill(["players" => [$newPlayer, $adversary]]) :
+            $game->fill(["players" => [$adversary, $newPlayer]]);
 
         // Save the updated game and players to the database
         $adversary->save();
-        $player->save();
+        $newPlayer->save();
         $game->save();
 
         // return the updated game and players to the frontend.
-        return [$player, $adversary, $game];
+        return [$newPlayer, $adversary, $game];
     }
 }

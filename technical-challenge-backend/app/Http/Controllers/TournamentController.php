@@ -10,13 +10,19 @@ use Illuminate\Http\Request;
 use App\Http\Resources\GameResource;
 use App\Http\Resources\RoundResource;
 use App\Http\Resources\PlayerResource;
+use App\Http\Resources\TournamentResource;
 
 class TournamentController extends Controller
 {
     public function index()
     {
-        $tournaments = Tournament::all();
-        return $tournaments;
+        $tournaments = Tournament::orderBy('updated_at', 'desc')->get()->take(50);
+
+        $tournamentResources = $tournaments->map(function ($tournament) {
+            return new TournamentResource($tournament);
+        })->all();
+
+        return [$tournamentResources];
     }
 
     public function show(Tournament $tournament)
@@ -98,7 +104,7 @@ class TournamentController extends Controller
 
         // update the tournament using the fill method
         // then save it to the database
-        $tournament->fill(["champion" => $data["champion"]])->save();        
+        $tournament->fill(["champion" => $data["champion"]])->save();
 
         // return the updated version
         return [$tournament, $data];
