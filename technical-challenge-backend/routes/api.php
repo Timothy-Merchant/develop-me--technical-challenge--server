@@ -22,6 +22,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::post('/users/create', [UserController::class, "store"]);
+
 // Create Players for the game (from the frontend Roster list)
 Route::put('/players/{player}', [PlayerController::class, 'update']);
 
