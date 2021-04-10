@@ -83,7 +83,7 @@ class PlayerController extends Controller
             $game["service"] === 0 ?
                 $game->fill(["service" => 1]) : $game->fill(["service" => 0]);
 
-            if (abs($newPlayer["score"] - $adversary["score"]) > 2) {
+            if (abs($newPlayer["score"] - $adversary["score"]) > 1) {
                 $newPlayer->fill(["won" => 1]);
                 $adversary->fill(["won" => 2]);
             }
