@@ -73,7 +73,7 @@ class PlayerController extends Controller
         }
 
         // If both players have 20 or more points we're in a state of deuce
-        if ($newPlayer["score"] >= 5 && $adversary["score"] >= 5) {
+        if ($newPlayer["score"] >= 11 && $adversary["score"] >= 11) {
             $game->fill(["deuce" => 1]);
         };
 
@@ -92,7 +92,7 @@ class PlayerController extends Controller
         // Else, change service every 2 serves
         if ($game["deuce"] === 0) {
 
-            if ($totalScore % 2 === 0) {
+            if ($totalScore % 2 === 0 && $totalScore > 1) {
                 $game["service"] === 0 ?
                     $game->fill(["service" => 1]) : $game->fill(["service" => 0]);
             }
