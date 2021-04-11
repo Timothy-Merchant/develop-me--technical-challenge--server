@@ -72,17 +72,6 @@ class RoundController extends Controller
             }
         }
 
-        // $data = $request->all();     
-        // $animal = new Animal($data);                 
-        // $animal->owner()->associate($owner);
-        // $animal->save();
-        // $animal->setTreatments($request->get("treatments"));
-        // return new AnimalResource($animal);
-
-        // foreach ($players as $player) {
-        //     Player::create($player);
-        // }
-
         return $rounds;
     }
 
